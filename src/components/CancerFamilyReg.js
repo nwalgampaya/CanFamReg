@@ -1,18 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Field } from 'react-final-form'
+// import { Field } from 'react-final-form'
 import '../App.css';
 import '../index.css';
 import "../styles/styles.scss";
 import Wizard from '../Wizard.js'
 import Welcome from './steps/Welcome.js'
 import DatePicker from 'react-date-picker';
-import DropdownMenu, { DropdownItemGroup, DropdownItem } from '@atlaskit/dropdown-menu';
+// import DropdownMenu, { DropdownItemGroup, DropdownItem } from '@atlaskit/dropdown-menu';
+import { withFormik, Form, Field } from 'formik'
+import Yup from 'yup'
 
 // import ComboDatePicker from '../reactComboDatePicker.js'
 
 
-export default class CancerFamilyReg extends React.Component {
+class CancerFamilyReg extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -137,6 +139,14 @@ export default class CancerFamilyReg extends React.Component {
     }
     render() {
 
+        // Formik : Passing the props
+        const {      
+            values,
+            errors,
+            touched,
+            isSubmitting
+          
+        } = this.props;
 
 
         return (
@@ -190,7 +200,8 @@ export default class CancerFamilyReg extends React.Component {
                                         </div>
 
                                         <div className="col-sm-12">
-                                            <span>{this.state.aodeath}</span>
+                                            <span><label className="form-check-label" name ="aodeathColumn"  >{values.aodeathColumn}</label></span>
+                                            {/* {this.state.aodeath} */}
                                         </div><br/>
                                         
                                         <div className="col-sm-12">
@@ -317,9 +328,12 @@ export default class CancerFamilyReg extends React.Component {
                                         <div className="col-sm-12">
                                             Age of Death: 
                                         </div>
-
                                         <div className="col-sm-4">
-                                            <span>{this.state.currentaodeath}</span>
+                                            <span name ="currentaodeathColumn" > </span>
+                                                {/* // {this.state.currentaodeath}
+                                                value={"values.currentaodeathColumn"} */}
+                                             {/* <label type="label" name ="currentaodeathColumn" value={values.currentaodeathColumn}></input> */}
+                                             
                                         </div><br/>
 
 
@@ -490,8 +504,18 @@ export default class CancerFamilyReg extends React.Component {
 
     }
 }
+const FormikApp = withFormik({
+    mapPropsToValues({aodeathColumn, currentaodeathColumn}) {
+    
+        return {
+            aodeathColumn:'fromDb',
+            currentaodeathColumn: "testin",
+        }
+    }
 
+})(CancerFamilyReg)
 
+export default FormikApp;
     {/* <DropdownMenu
       trigger="Choices"
       triggerType="button"

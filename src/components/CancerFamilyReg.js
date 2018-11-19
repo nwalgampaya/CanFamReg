@@ -9,7 +9,8 @@ import Welcome from './steps/Welcome.js'
 import DatePicker from 'react-date-picker';
 // import DropdownMenu, { DropdownItemGroup, DropdownItem } from '@atlaskit/dropdown-menu';
 import { withFormik, Form, Field } from 'formik'
-import Yup from 'yup'
+// import Yup from 'yup'
+import * as Yup from 'yup'
 
 // import ComboDatePicker from '../reactComboDatePicker.js'
 
@@ -53,6 +54,13 @@ class CancerFamilyReg extends React.Component {
             currentfPI4Status:'',
             currentRelationshipCode:'',
 
+
+            // Boolean Values
+            isAlive : true,
+
+            // Values from Rest Service
+            existingPersonData:[],
+
         };
         this.oncurrentDOBChange = this.oncurrentDOBChange.bind(this);
         this.setCurrentLKDA = this.setCurrentLKDA.bind(this);
@@ -75,6 +83,16 @@ class CancerFamilyReg extends React.Component {
     // onnewdobChange = newdob => this.setState({ newdob })
 
     setCurrentStatus(event){
+        console.log("in SetCurrentStatus")
+        if(event.target.value==2){
+            this.setState({
+                isAlive : false,
+            })
+        }else{
+            this.setState({
+                isAlive : true,
+            })
+        }
         this.setState({
             currentStatus: event.target.value,
           });
@@ -137,6 +155,98 @@ class CancerFamilyReg extends React.Component {
             currentRelationshipCode: event.target.value,
           });
     }
+
+
+    getFromDB(){
+        // existingPersonData
+
+        // const urlProfession = properties.baseUrl + "professions/";
+        const urlProfession =  "professions/";
+        fetch(urlProfession)
+          .then(response => response.json())
+          .then((data) => {
+    
+            console.log(data);
+            this.setState({
+                existingPersonData: data,
+    
+            });
+            // this.state.profession.push(data);
+          })
+
+    }
+
+    // To assign values form data base to 'Existing Details" variables.
+    assignDbDataToFields(){
+        this.state.gender= this.state.existingPersonData.gender,
+        this.state.dateOFDOB= this.state.existingPersonData.dateOFDOB,
+        this.state.status= this.state.existingPersonData.status,
+        this.state.dateOfDeath= this.state.existingPersonData.dateOfDeath,
+        //this.state.= //this.existingPersonData.//u
+        this.state.aodeath= this.state.existingPersonData.aodeath,
+        this.state.sourceOFDeath= this.state.existingPersonData.sourceOFDeath,
+        this.state.courseOFDeath= this.state.existingPersonData.courseOFDeath,
+        this.state.dateOfLKDA= this.state.existingPersonData.dateOfLKDA,
+        this.state.sourceOfLiveDate= this.state.existingPersonData.sourceOfLiveDate,
+        this.state.fPI1Status= this.state.existingPersonData.fPI1Status,
+        this.state.fPI2Status= this.state.existingPersonData.fPI2Status,
+        this.state.fPI3Status= this.state.existingPersonData.fPI3Status,
+        this.state.fPI4Status= this.state.existingPersonData.fPI4Status,
+        this.state.relationshipCode= this.state.existingPersonData.relationshipCode
+    }
+
+    // Used for saving 'New Details' to the db
+    postRequest() {
+        let data = {
+            currentGender:this.state.currentGender,
+            currentDOB:this.state.currentDOB, 
+            currentStatus:this.state.currentStatus,
+            currentDeath:this.state.currentDeath,
+            // todu
+            currentaodeath:this.state.currentaodeath,
+            currentSourceOFDeath:this.state.currentSourceOFDeath,
+            currentCourseOFDeath:this.state.currentCourseOFDeath,
+            currentLKDA:this.state.currentLKDA,
+            // this.state.urrentsourceOfLiveDate,
+            currentCourseOfLiveDate:this.state.currentCourseOfLiveDate,
+            currentfPI1Status:this.state.currentfPI1Status,
+            currentfPI2Status:this.state.currentfPI2Status,
+            currentfPI3Status:this.state.currentfPI3Status,
+            currentfPI4Status:this.state.currentfPI4Status,
+            currentRelationshipCode:this.state.currentRelationshipCode,
+        }
+
+        // const url = properties.baseUrl + 'practitioners/create';
+        const url = 'practitioners/create';
+
+        var request = new Request(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        mode: "cors",
+        credentials: "same-origin",
+        crossDomain: true
+
+        });
+
+        fetch(request)
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonObject) => {
+            console.log("CREATED ID :" + jsonObject.id);
+            this.state.jsonId = jsonObject.id;
+            // document.write(`ID ${jsonObject.id} was created!`);
+        })
+        .then(() => {
+            if (this.state.jsonId.length !== 0) {
+            this.fetchPractitionerId(this.state.jsonId)
+            }
+        })
+        .catch((error) => {
+            document.write(error);
+        });
+    }
     render() {
 
         // Formik : Passing the props
@@ -170,7 +280,12 @@ class CancerFamilyReg extends React.Component {
                                         </div>
 
                                         <div className="col-sm-12">
-                                            <span>{this.state.gender}</span>
+                                            {/* <span>{this.state.gender}</span> */}
+                                            <Field type="email" name="email" placeholder="Email"/><br/>
+                                            <div className="validationMsg">
+                                            {/* <Error name="ageColumn" /> */}
+                                                { touched.email && errors.email && <p>{errors.email}</p> }
+                                            </div>
                                         </div><br/>
                                         <div className="col-sm-12">
                                             Date of Birth:
@@ -283,11 +398,11 @@ class CancerFamilyReg extends React.Component {
                                             </div>
                                         <div className="col-sm-12">
                                             <div className="form-check form-check-inline" onChange={this.setSex.bind(this)} >
-                                                <input className="form-check-input" type="radio" value="1" checked={this.state.currentGender == 1 ? true : false} name="genderColumn" />
+                                                <Field className="form-check-input" type="radio" value="1" checked={this.state.currentGender == 1 ? true : false} name="genderColumn" />
                                                 <label className="form-check-label" >Male</label>
-                                                <input className="form-check-input" type="radio" value="2" checked={this.state.currentGender == 2 ? true : false} name="genderColumn" />
+                                                <Field className="form-check-input" type="radio" value="2" checked={this.state.currentGender == 2 ? true : false} name="genderColumn" />
                                                 <label className="form-check-label" >Female</label>
-                                                <input className="form-check-input" type="radio" value="3" checked={this.state.currentGender == 3 ? true : false} name="genderColumn" />
+                                                <Field className="form-check-input" type="radio" value="3" checked={this.state.currentGender == 3 ? true : false} name="genderColumn" />
                                                 <label className="form-check-label" >Unknown</label>
 
                                             </div><br/>
@@ -319,8 +434,8 @@ class CancerFamilyReg extends React.Component {
                                             Date of Death: 
                                         </div>
 
-                                        <div className="col-sm-5"> 
-                                            <DatePicker
+                                        <div  className="col-sm-5"> 
+                                            <DatePicker disabled={this.state.isAlive}
                                             onChange={this.setCurrentDeath}
                                             value={this.state.currentDeath}
                                             />
@@ -329,7 +444,8 @@ class CancerFamilyReg extends React.Component {
                                             Age of Death: 
                                         </div>
                                         <div className="col-sm-4">
-                                            <span name ="currentaodeathColumn" > </span>
+                                            {/* <span disabled={this.state.isAlive} name ="currentaodeathColumn" > </span> */}
+                                            <input type="text" name="currentaodeathColumn" disabled={this.state.isAlive}/> 
                                                 {/* // {this.state.currentaodeath}
                                                 value={"values.currentaodeathColumn"} */}
                                              {/* <label type="label" name ="currentaodeathColumn" value={values.currentaodeathColumn}></input> */}
@@ -341,7 +457,7 @@ class CancerFamilyReg extends React.Component {
                                             Source of Death Information: 
                                         </div>
                                         <div className="col-sm-5">
-                                            <select className="form-control dorp-box" value={this.state.currentSourceOFDeath} onChange={this.setCurrentSource.bind(this)} name="currentDeathColumn">
+                                            <select disabled={this.state.isAlive} className="form-control dorp-box" value={this.state.currentSourceOFDeath} onChange={this.setCurrentSource.bind(this)} name="currentDeathColumn">
                                             {
                                                 // this.state.ageData.map((ageGroup, i) => {
                                                     
@@ -355,13 +471,32 @@ class CancerFamilyReg extends React.Component {
                                             }
                                             </select>
                                         </div>
-                                        <div className="col-sm-12">
-                                            Cause of Death:  
+                                        <div className="form-check-inline">
+                                            <div className="col-sm-9">
+                                                Cause of Death:  
+                                            </div>
+                                            
+                                             <div className="col-sm-1"></div>
+
+                                            <div className="col-sm-2">
+                                                (Unknown)  
+                                            </div>
                                         </div>
 
-                                        <div className="col-sm-12">
-                                            <span>{this.state.currentCourseOFDeath}</span>
-                                        </div><br/>
+                                        <div className="form-check-inline">
+                                            <div className="col-sm-9">
+                                                <input type="text" name="currentCourseOFDeathColumn" disabled={this.state.isAlive}/> 
+                                            </div>
+                                                {/* <span>{this.state.currentCourseOFDeath}</span> */}
+                                            
+                                            <div className="col-sm-1"></div>
+
+                                            <div className="col-sm-1">
+                                                <input className="form-check-input" type="checkbox" name="unknownCourseOFDeath" disabled={this.state.isAlive} />
+                                                {/* checked={values.newsletter} */}
+                                            </div>
+                                        </div>
+                                        <br/>
 
                                         <div className="col-sm-12">
                                             Last Known Date:  
@@ -505,15 +640,26 @@ class CancerFamilyReg extends React.Component {
     }
 }
 const FormikApp = withFormik({
-    mapPropsToValues({aodeathColumn, currentaodeathColumn}) {
+    
+
+
+    mapPropsToValues({email,aodeathColumn, currentaodeathColumn}) {
     
         return {
+            email: email || '',
             aodeathColumn:'fromDb',
             currentaodeathColumn: "testin",
+            vitalStatusColumn: 1,
         }
-    }
+    },
 
-})(CancerFamilyReg)
+    validationSchema: Yup.object().shape({
+        email: Yup.string().email('Email not valid').required('Email is required'),
+        // password: Yup.string().min(9, 'Password must be 9 characters or longer').required('Password is required')
+      }),
+})(CancerFamilyReg) 
+
+
 
 export default FormikApp;
     {/* <DropdownMenu

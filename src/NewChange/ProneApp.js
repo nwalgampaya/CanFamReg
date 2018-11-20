@@ -4,13 +4,15 @@ import { Field } from 'react-final-form'
 import '../App.css';
 import '../index.css';
 import MyTable from './steps/PictoGram.js';
-import Welcome from './steps/Welcome.js';
+import Welcome from './steps/WelcomeProne.js';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import { properties } from '../properties.js';
 import MultiForm from '../components/steps/DynamicBox'
-import buttonPlus from '../img/error.png';
+// import buttonPlus from '../img/error.png';
+import buttonPlus from '../img/button-plus.png';
+import buttonMinus from '../img/button-minus.png';
 
 // var SampleComponent = React.createClass({
 //   render: function() {
@@ -45,9 +47,11 @@ export default class ProneApp extends Component {
       errors: {},
       score: '',
       specialProf: 'specialists',
-      complaintType: '111',
+      // complaintType: '111',
+      complaintType: [],
       complaintTypeData: [],
-      specificComplaint: '111',
+      // specificComplaint: '111',
+      specificComplaint: [],
       specificComplaintData: [],
       ageData: [],
       complaintsData: [],
@@ -59,10 +63,13 @@ export default class ProneApp extends Component {
       isHiddenComplaints: true,
       returnArrayFromChild: [],
       duplArryFromChild: [],
-      specificComplaintArr: '',
+      specificComplaintArr: [],
+      specificComplaintStr:'',
       multiComplaint:[],
-    };
+      values: []
 
+    };
+    
   }
 
 
@@ -173,15 +180,25 @@ export default class ProneApp extends Component {
 
   postRequest() {
     console.log("in POST")
+
+    //To make the variable empty when previous is clicked after going to the final screen
+    this.state.specificComplaintStr=''
+    this.state.specificComplaintArr.map((specificComp,i)=>{
+      
+      console.log("in POST specificComp : " + specificComp)
+      // this.state.specificComplaintArr=  this.state.specificComplaintArr + specificComp
+      this.state.specificComplaintStr =  this.state.specificComplaintStr + specificComp+','
+    })
+
     method: 'POST';
     // this.state.specificComplaintArr= this.state.returnArrayFromChild
     this.state.multiComplaint= this.state.returnArrayFromChild
 
     // this.state.specificComplaintArr.map((specialProfArr, i) => {
-    this.state.multiComplaint.map((specialProfArr, i) => {
-      this.state.specificComplaintArr=  this.state.specificComplaintArr + specialProfArr+','
-      console.log("+++++++++++++++++++++++++++++++++" + this.state.specificComplaintArr)
-    })
+    // this.state.multiComplaint.map((specialProfArr, i) => {
+    //   this.state.specificComplaintArr=  this.state.specificComplaintArr + specialProfArr+','
+    //   console.log("+++++++++++++++++++++++++++++++++" + this.state.specificComplaintArr)
+    // })
 
     console.log("+++++++++++++++++ out post");
     let data = {
@@ -193,7 +210,7 @@ export default class ProneApp extends Component {
       complaints: this.state.complaints,
       // complaintType: this.state.complaintType,
       // specificComplaint: this.state.specificComplaintArr,
-      issueType: this.state.specificComplaintArr,
+      issueType: this.state.specificComplaintStr,
       // multiComplaint : JSON.stringify( [1,2]),
       //  this.state.multiComplaint,
     }
@@ -256,6 +273,9 @@ export default class ProneApp extends Component {
 
 
   componentDidMount() {
+    // this.specificComplaint=111
+    // this.setState(prevState => ({ values: [...prevState.values, ''] }))
+    this.setState(prevState => ({ values: [...prevState.values, '']}))
     this.state.hideSpecialty=true
     console.log("SEL PROF : " + this.state.selectedProfession)
 
@@ -417,10 +437,18 @@ export default class ProneApp extends Component {
 
 
 
-  handleChangeSpecificComplaint = (e) => {
-    this.setState({ specificComplaint: e.target.value });
-    console.log("specificComplaint id ******************8888" + this.state.specificComplaint);
+  handleChangeSpecificComplaint = (i,event) => {
+    this.setState({ specificComplaint: event.target.value });
+    console.log("specificComplaint id ******************8888: " + event.target.value );
+    console.log("specificComplaint index ******************: " + i);
 
+    this.state.specificComplaintArr[i]=event.target.value
+
+    let specificComplaintCopy = [...this.state.specificComplaint];
+    specificComplaintCopy[i]= event.target.value,
+    this.setState({
+      specificComplaint:specificComplaintCopy
+    });
     // Looping To get the Specialty Name from the id returned from above 'e.target.value' ( eg : "Dentists and Dental Prosthetis")
     // this.state.specificComplaintData.map((specialComplain, i) => {
     //   if (specialComplain.typeId == this.state.complaintType) {
@@ -519,9 +547,18 @@ export default class ProneApp extends Component {
     alert("in load" + e.target.value)
   }
 
-  handleComplaintTypeChange = (e) => {
-    this.setState({ complaintType: e.target.value });
+  handleComplaintTypeChange = (i,event) => {
+    // this.setState({ complaintType: event.target.value });
+    
+    // let values = [...this.state.values];
+    // values[i] = event.target.value;
+    // this.setState({ values });
 
+    let complaintTypeCopy = [...this.state.complaintType];
+    complaintTypeCopy[i]= event.target.value,
+    this.setState({
+      complaintType:complaintTypeCopy
+    });
     console.log("selected complaintTypeData id : " + this.state.complaintType)
   }
 
@@ -544,7 +581,7 @@ export default class ProneApp extends Component {
         hideSpecialty: true,
       }),
 
-      this.state.specificComplaintArr='',
+      // this.state.specificComplaintArr='',
       console.log("In end session *******88")
   }
   onSubmit(e) {
@@ -626,6 +663,184 @@ export default class ProneApp extends Component {
     })
     // this.setState({ specificComplaint:speccompValArr});
   }
+  handleChangeSpecComplaint = (e) => {
+    // this.setComplaintState();
+    this.setState({ specificComplaint: e.target.value });
+
+}
+  addClick(){
+    console.log("addclick")
+    this.setState(prevState => ({ values: [...prevState.values, '']}))
+  }
+//   removeClick(i){
+//     console.log("in removeClick");
+//     let values = [...this.state.values];
+//     values.splice(i,1);
+//     this.setState({ values });
+
+//     let specificComplaintArr = [...this.state.specificComplaintArr];
+//     specificComplaintArr.splice(i,1);
+//     this.setState({ specificComplaintArr });
+//     this.state.specificComplaintArr.map((specificComp,i)=>{
+      
+//       console.log("in removeClick specificComp : " + specificComp)
+//     })
+//  }
+
+//   createUIOriginal(){
+//     return this.state.values.map((el, i) => 
+//         <div key={i}>
+//            <input type="text" value={el} onChange={this.handleComplaintTypeChange.bind(this, i)} />
+//            <input type='button' value='remove' onClick={this.removeClick.bind(this, i)}/>
+//         </div>          
+//     )
+//  }
+
+ 
+
+createUI(){
+  const Error = ({ name }) => (
+    <Field
+      name={name}
+      subscribe={{ touched: true, error: true }}
+      render={({ meta: { touched, error } }) =>
+        touched && error ? <span>{error}</span> : null
+      }
+    />
+  )
+  return this.state.values.map((el, i) => 
+  <div key={i}>
+   <Wizard.Page 
+  //  validate={values => {
+  //         const errors = {}
+  //         console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 222")
+  //         if (this.state.specificComplaint=='') {
+  //           // alert("In error")
+  //           console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% if"+ this.state.returnArrayFromChild)
+  //           errors.specificComplaintcolumn = 'Please enter an appropriate value aaaa'
+  //         }else{
+  //           console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% else")
+  //           // errors.specificComplaintcolumn =''
+  //         }
+
+  //         return errors
+  //       }}
+        >
+     <div class="row">
+      <div class="col-sm-8">
+        {/* <div class="row">
+        <div className="col-sm-10"> */}
+        <hr className="hr-text"  data-content={"Complaint : "+i}/>
+        {/* </div> */}
+    </div></div>
+    {/* </div> */}
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="row">
+            <div className="col-sm-6">
+              <label className="control-margin-lbl"> Complaint issue type:  </label>
+              <label className="control-margin-complaint lastTwoYear"> Complaint issue type in the past two years  </label>
+            </div>
+                <div className="col-sm-4">
+                {/* this.state.complaintType */}
+                  <select className="form-control dorp-box" id="idCompType" value={this.state.complaintType[i]} onChange={this.handleComplaintTypeChange.bind(this,i)} name={"complaintTypecolumn"+i}>   { 
+                   
+                    this.state.complaintTypeData.map((read, i) => {
+                      this.state.read = read.name;
+                      console.log("complaintTypeData ID 11 :  " + read.id);
+                      return <option key={read.value} value={read.id}>{read.name}</option>
+                    })
+                  }
+                  </select>
+                  <div className="validationMsg">
+                    <Error name={"complaintTypecolumn"+i} />
+                  </div>
+                </div>
+        </div>
+          </div></div>
+      {/* <br /> */}
+
+     <div class="row">
+      <div class="col-sm-8">
+        <div class="row">
+            <div className="col-sm-6">
+              <label className="control-margin-lbl"> Specific complaint issue:</label>
+              <label className="control-margin-complaint lastTwoYear"> Complaint issue type in the past two years  </label>
+        </div>           
+        <div className="col-sm-4">
+        {/* this.state.specificComplaint */}
+                <select className="form-control dorp-box"  value={this.state.specificComplaint[i]}  onChange={this.handleChangeSpecificComplaint.bind(this,i)} name={"specificComplaintcolumn"+i} >{
+                   
+                  this.state.specificComplaintData.map((specificComplain, j) => {
+                     console.log("speacialty typeId&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& :  " + specificComplain.typeid);
+                     console.log("speacialty typeId&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&  complaintType:  " + this.state.complaintType[i]);
+                     if (specificComplain.typeid == this.state.complaintType[i]) {
+                      console.log("speacialty typeId&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& :  " + specificComplain.typeid);
+                      return (<option key={specificComplain.value} value={specificComplain.id}>{specificComplain.name}</option>)
+                    }else if(specificComplain.typeid ==0){
+                      return (<option key={specificComplain.value} value={specificComplain.id}>{specificComplain.name}</option>)
+                    }
+                  })
+                }
+                </select>
+                <div className="validationMsg">
+                {/* <Error name={"specificComplaintcolumn"+i}  */}
+                    <Error name={"specificComplaintcolumn"+i} />
+                </div>
+          </div>
+        </div>
+      </div>
+      
+      </div>
+
+          {/* <br/> */}
+          <div class={i==0 ? "hidden" : "row"} >
+                <div class="col-sm-8">
+                  <div class="row">
+                      <div className="col-sm-6"></div>
+                      <div className="col-sm-5"></div>
+                      <div id="minusButton" className="col-sm-1" >
+                          <input className="img-box" type="button" style={{ backgroundImage: `url(${buttonMinus})` }} alt="my image" onClick={this.onRemoveBtnClick.bind(this, i)} ></input>
+                      </div>
+          
+                  </div>
+                </div>
+          </div>
+          
+</Wizard.Page>
+</div>
+ )
+}
+
+onRemoveBtnClick(i,event) {
+  console.log("in removeClick")
+        let values = [...this.state.values];
+        values.splice(i,1);
+        this.setState({ values });
+
+        let complaintType = [...this.state.complaintType];
+        complaintType[i]= event.target.value,
+        complaintType.splice(i,1);
+        this.setState({
+          complaintType:complaintType
+        });
+
+        let specificComplaint = [...this.state.specificComplaint];
+        // specificComplaintCopy[i]= event.target.value,
+        specificComplaint.splice(i,1);
+        this.setState({
+          specificComplaint:specificComplaint
+         });
+
+         let specificComplaintArr = [...this.state.specificComplaintArr];
+          specificComplaintArr.splice(i,1);
+          this.setState({ specificComplaintArr });
+          this.state.specificComplaintArr.map((specificComp,i)=>{
+      
+            console.log("in removeClick specificComp : " + specificComp)
+          })
+}
+
   render() {
 
     const Error = ({ name }) => (
@@ -638,7 +853,11 @@ export default class ProneApp extends Component {
       />
     )
 
-
+    // const documents = this.state.documents.map((Element, index) => {
+    //   return <Element key={ index } index={ index } 
+    //   delEvent={this.deleteUser.bind(this, index)}
+    //   />
+    // });
 
 
     return (
@@ -658,7 +877,8 @@ export default class ProneApp extends Component {
         </Wizard.Page> */}
         <Wizard.Page validate={values => {
           const errors = {}
-          console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 1111")
+          // specificComplaintcolumn:[]
+          console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 1111" + this.state.complaints)
             
           // if (!this.state.age) {
           //   errors.age = 'Please enter an appropriate value'
@@ -681,8 +901,14 @@ export default class ProneApp extends Component {
           }
 
           if (this.state.complaints == 111) {
-            // alert("In error")
+            
+            
             errors.complaintsColumn = 'Please enter an appropriate value'
+          }else if(this.state.values.length>this.state.complaints-1){
+            // alert("In error" + this.state.complaints)
+
+            errors.complaintsColumn = 'Number of total complaints must be equal or greater than the number of complaints in the last wto years'
+
           }
 
           // if (!this.state.complaints) {
@@ -704,22 +930,105 @@ export default class ProneApp extends Component {
           }
           if (this.state.location == 111) {
             // alert("In error")
+            console.log("error age Column")
             errors.locationcolumn = 'Please enter an appropriate value'
           }
-          // if (this.state.complaintType==111) {
-          //   // alert("In error")
-          //   errors.complaintTypecolumn = 'Please enter an appropriate value'
-          // }
           
-          // if (this.state.specificComplaint==111) {
-          if ( this.state.returnArrayFromChild=="") {
-            // alert("In error")
-            console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% if"+ this.state.returnArrayFromChild)
-            errors.specificComplaintcolumn = 'Please enter an appropriate value'
-          }else{
-            console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% else")
-            // errors.specificComplaintcolumn =''
-          }
+          
+          // if ( this.state.returnArrayFromChild=="") {
+            this.state.values.map((el, i) => {
+              // if (this.state.specificComplaint[i]!='undefined' ) {
+                var speccColum = document.getElementsByName('specificComplaintcolumn'+i)
+                var length = speccColum.length;
+
+                console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% if test "+ length)
+                console.log(this.state.specificComplaint[i])
+                 if  (typeof(this.state.specificComplaint[i]) != 'undefined' ){
+                // if (this.state.specificComplaint[i]=='' ) {
+                  console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% else")
+                  console.log("in validation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% else")
+                }else{
+                 // errors.specificComplaintcolumn1 = 'Please enter an appropriate value 111'
+                  
+             
+                  if (i==0){
+                    errors.specificComplaintcolumn0 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }if (i==1){
+                    errors.specificComplaintcolumn1 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }
+                  if (i==2){
+                    errors.specificComplaintcolumn2 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }
+                  if (i==3){
+                    errors.specificComplaintcolumn3 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }
+                  if (i==4){
+                    errors.specificComplaintcolumn4 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }
+                  if (i==5){
+                    errors.specificComplaintcolumn5 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }
+                  if (i==6){
+                    errors.specificComplaintcolumn6 = 'Please enter an appropriate value'
+                    // errors.specificComplaintcolumn = ''
+                  }
+                  // else if (this.state.specificComplaint[0]==1){
+                  //   errors.specificComplaintcolumn0 = ''
+                  //   errors.specificComplaintcolumn1 = ''
+                  // }
+                  // errors.specificComplaintcolumn =''
+               // }
+              // }
+         
+              }
+console.log("complaintType^^^^^^^^^^^^^^^^^^^^^^^^^ : " + this.state.complaintType[i])
+console.log("complaintType^^^^^^^^^^^^^^^^^^^^^^^^^ : " + i)
+              if (typeof(this.state.complaintType[i])!= 'undefined'   ){
+                // alert("In error")
+                // errors.complaintTypecolumn0 = 'Please enter an appropriate value'
+                console.log("complaintType^^^^^^^^^^^^^^^^^^^^^^^^^ In 0 : " + i)
+              }else{
+                  if (i==0){
+                    errors.complaintTypecolumn0 = 'Please enter an appropriate value'
+                   }
+                   if (i==1){
+                    errors.complaintTypecolumn1 = 'Please enter an appropriate value'
+                  }
+                  if (i==2){
+                    errors.complaintTypecolumn2 = 'Please enter an appropriate value'
+                  }
+                  if (i==3){
+                    errors.complaintTypecolumn3 = 'Please enter an appropriate value'
+                  }
+                  if (i==4){
+                    errors.complaintTypecolumn4 = 'Please enter an appropriate value'
+                  }
+                  if (i==5){
+                    errors.complaintTypecolumn5 = 'Please enter an appropriate value'
+                  }
+                  if (i==6){
+                    errors.complaintTypecolumn6 = 'Please enter an appropriate value'
+                  }
+                  // if (i==7){
+                  //   errors.complaintTypecolumn7 = 'Please enter an appropriate value 007'
+                  // }
+                // errors.specificComplaintcolumn1 = 'Please enter an appropriate value 111'
+                 
+            
+                }
+              })
+             
+              // if (this.state.specificComplaint == '') {
+              //   // alert("In error")
+              //   console.log("error age Column")
+              //   errors.specificComplaintcolumn = 'Please enter an appropriate value'
+            
 
           return errors
         }}>
@@ -800,7 +1109,7 @@ export default class ProneApp extends Component {
 
                 {/* </tr> */}
                 {/* <div > */}
-                <br />
+                {/* <br /> */}
                 {/* <tr>
 
                   <td> */}
@@ -821,7 +1130,7 @@ export default class ProneApp extends Component {
                             }
                             </select>
                             <div className="validationMsg">
-                              <Error name="sex" />
+                              <Error name="professioncolumn" />
                             </div>
                           </div></div></div></div>
                     <br/>
@@ -904,22 +1213,23 @@ export default class ProneApp extends Component {
                       <Error name="locationcolumn" />
                     </div>
                     </div></div></div></div>
+
+                    {/* <br /> */}
                   {/* </td>
                 </tr>  */}
-                <br />
                 {/* </tbody>
             </table> */}
           {/* </div>   */}
 
                 {/* Start specific complaints */}
-                {/* <div>
-                <table>
-              <tbody> */}
-                {/* <tr>
-
-                  <td> <label className="control-margin-lbl"> Complaint issue type:  </label></td>
-                  <td>
-                    <div>
+            {/* <br />
+                <div class="row">
+              <div class="col-sm-8">
+            <div class="row">
+                <div className="col-sm-6">
+                   <label className="control-margin-lbl"> Complaint issue type:  </label>
+                   </div>
+                    <div className="col-sm-4">
                       <select className="form-control dorp-box" id="idCompType" value={this.state.complaintType} onChange={this.handleComplaintTypeChange.bind(this)} name="complaintTypecolumn">                            {
                         this.state.complaintTypeData.map((read, i) => {
                           this.state.read = read.name;
@@ -931,12 +1241,17 @@ export default class ProneApp extends Component {
                       <div className="validationMsg">
                         <Error name="complaintTypecolumn" />
                       </div>
-                    </div>
-                  </td>
-                </tr> <br />
-                <tr>
-                  <td> <label className="control-margin-lbl"> Specific complaint issue:</label></td>
-                  <td>
+                      </div></div></div></div>
+                  <br />
+
+                  <div class="row">
+              <div class="col-sm-8">
+            <div class="row">
+                <div className="col-sm-6">
+                   <label className="control-margin-lbl"> Specific complaint issue:</label>
+      </div>           
+      <div className="col-sm-4">
+
                     <select className="form-control dorp-box" value={this.state.specificComplaint} onChange={this.handleChangeSpecificComplaint.bind(this)} name="specificComplaintcolumn">{
                       
                       this.state.specificComplaintData.map((specificComplain, i) => {
@@ -950,8 +1265,28 @@ export default class ProneApp extends Component {
                     <div className="validationMsg">
                         <Error name="specificComplaintcolumn" />
                       </div>
-                  </td>
-                  </tr> */}
+                      </div></div></div></div>
+
+                      <br/> */}
+              <div class="row">
+                <div class="col-sm-8">
+                  <div class="row">
+                      <div className="col-sm-6"></div>
+                      <div className="col-sm-5"></div>
+
+                      <div className="col-sm-1">
+                          <input className="img-box plusButton" type="button" style={{ backgroundImage: `url(${buttonPlus})` }} alt="my image" onClick={() => this.addClick()} ></input>
+                      </div> 
+                </div>  
+                </div>   
+              </div> 
+
+                {/* <div >
+                        <input className="img-box plusButton" type="button" style={{ backgroundImage: `url(${buttonPlus})` }} alt="my image"  ></input>
+                    </div>*/}
+                       {this.createUI()}   
+                {/* </div> */}
+                 
                 {/* <td> <button> <img src={buttonPlus} alt="my image" onClick={() => this.createTableMale()} /></button></td> */}
                 {/* <input type="button" img src={buttonPlus} alt="my image" onClick={() => this.createTableMale()} ></input> */}
                 {/* <div>
@@ -959,15 +1294,13 @@ export default class ProneApp extends Component {
 
                       
                     
-                  </div> */}
 
                 {/* <tr> */}
                 {/* specificComplaintData={this.state.specificComplaintData} */}
 
-                <MultiForm onSpecCompToParent={this.setReturnValChild}  onRemoveElement={this.removeElementFromArray}/>
-                {/* <div >
-                        <input className="img-box plusButton" type="button" style={{ backgroundImage: `url(${buttonPlus})` }} alt="my image"  ></input>
-                    </div> */}
+ {/* <MultiForm onSpecCompToParent={this.setReturnValChild}  onRemoveElement={this.removeElementFromArray}/> */}
+
+
                 {/* </tr> */}
                 {/* </tbody>
                   </table>
@@ -1020,11 +1353,18 @@ export default class ProneApp extends Component {
                       })
                     }
                     </select>
+                    </div>
+                    </div>
+                    <div class="row">
+      <div class="col-sm-12">
+        <div class="row">
+            <div className="col-sm-6"></div>
+            <div class="col-sm-5">
                     <div className="validationMsg">
                       <Error name="complaintsColumn" />
                     </div>
-                    </div>
-                    </div>
+</div></div></div></div>
+
                     <div className="col-sm-4">  
                             </div>
                             </div></div>

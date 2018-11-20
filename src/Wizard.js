@@ -205,7 +205,7 @@ export default class Wizard extends React.Component {
                     { page>0 && (<button className="btn btn-primary" type="button" onClick={this.previous}> Exit Record</button>)}
                     {/* { page>0 && (<button className="btn btn-primary" type="button" > Logout</button>)} */}
 
-                    {page ==0  &&(<button className="btn btn-primary pull-right" type="submit"  >Next</button>)} 
+                    {(!isLastPage ) && page >=0  &&(<button className="btn btn-primary pull-right" type="submit"  >Next</button>)} 
                     {/* {page ==3  &&(<button className="btn btn-primary pull-right" type="submit"  >Next</button>)}  */}
 
                     {/* {!page == 0 && !page == 1 && !isLastPage && <button className="btn btn-primary pull-right " type="submit">  Next  </button>} */}

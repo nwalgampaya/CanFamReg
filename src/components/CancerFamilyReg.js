@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 // import { Field } from 'react-final-form'
+import DatePicker from 'react-date-picker';
+import { withFormik, Form, Field } from 'formik'
+import * as Yup from 'yup'
 import '../App.css';
 import '../index.css';
 import "../styles/styles.scss";
 import Wizard from '../Wizard.js'
 import Welcome from './steps/Welcome.js'
-import DatePicker from 'react-date-picker';
+import CancerInfo from './steps/CancerInfo'
 // import DropdownMenu, { DropdownItemGroup, DropdownItem } from '@atlaskit/dropdown-menu';
-import { withFormik, Form, Field } from 'formik'
-// import Yup from 'yup'
-import * as Yup from 'yup'
 
 // import ComboDatePicker from '../reactComboDatePicker.js'
 
@@ -171,6 +171,8 @@ class CancerFamilyReg extends React.Component {
                 existingPersonData: data,
     
             });
+
+            this.assignDbDataToFields()
             // this.state.profession.push(data);
           })
 
@@ -178,21 +180,24 @@ class CancerFamilyReg extends React.Component {
 
     // To assign values form data base to 'Existing Details" variables.
     assignDbDataToFields(){
-        this.state.gender= this.state.existingPersonData.gender,
-        this.state.dateOFDOB= this.state.existingPersonData.dateOFDOB,
-        this.state.status= this.state.existingPersonData.status,
-        this.state.dateOfDeath= this.state.existingPersonData.dateOfDeath,
-        //this.state.= //this.existingPersonData.//u
-        this.state.aodeath= this.state.existingPersonData.aodeath,
-        this.state.sourceOFDeath= this.state.existingPersonData.sourceOFDeath,
-        this.state.courseOFDeath= this.state.existingPersonData.courseOFDeath,
-        this.state.dateOfLKDA= this.state.existingPersonData.dateOfLKDA,
-        this.state.sourceOfLiveDate= this.state.existingPersonData.sourceOfLiveDate,
-        this.state.fPI1Status= this.state.existingPersonData.fPI1Status,
-        this.state.fPI2Status= this.state.existingPersonData.fPI2Status,
-        this.state.fPI3Status= this.state.existingPersonData.fPI3Status,
-        this.state.fPI4Status= this.state.existingPersonData.fPI4Status,
-        this.state.relationshipCode= this.state.existingPersonData.relationshipCode
+
+        this.state.existingPersonData.map((read, i) => {
+            this.state.gender= read.gender,
+            this.state.dateOFDOB= read.dateOFDOB,
+            this.state.status= read.status,
+            this.state.dateOfDeath= read.dateOfDeath,
+            //this.state.= //this.existingPersonData.//u
+            this.state.aodeath= read.aodeath,
+            this.state.sourceOFDeath= read.sourceOFDeath,
+            this.state.courseOFDeath= read.courseOFDeath,
+            this.state.dateOfLKDA= read.dateOfLKDA,
+            this.state.sourceOfLiveDate= read.sourceOfLiveDate,
+            this.state.fPI1Status= read.fPI1Status,
+            this.state.fPI2Status= read.fPI2Status,
+            this.state.fPI3Status= read.fPI3Status,
+            this.state.fPI4Status= read.fPI4Status,
+            this.state.relationshipCode= read.relationshipCode
+        })    
     }
 
     // Used for saving 'New Details' to the db
@@ -632,6 +637,9 @@ class CancerFamilyReg extends React.Component {
                         </div>
                     </div>
                 </Wizard.Page>
+                <Wizard.Page>
+                    <CancerInfo/>
+                </Wizard.Page>
             </Wizard>
 
 
@@ -675,3 +683,10 @@ export default FormikApp;
 </DropdownMenu> */}
 {/* <div style={{ margin: '20px' }}> */}
 // ReactDOM.render(template, document.getElementById("app"));
+
+
+
+// Page 1 Functions
+    //getFromDB(),assignDbDataToFields(), postRequest()
+// Page 2 Functions
+    //

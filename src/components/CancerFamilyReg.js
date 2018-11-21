@@ -475,33 +475,47 @@ class CancerFamilyReg extends React.Component {
                                                 <option >{"Hospital Rec"}</option>
                                             }
                                             </select>
-                                        </div>
-                                        <div className="form-check-inline">
-                                            <div className="col-sm-9">
+                                        </div><br/>
+                                        {/* <div className="form-check-inline col-sm-12">
+                                            <div className="col-sm-4">
                                                 Cause of Death:  
                                             </div>
                                             
-                                             <div className="col-sm-1"></div>
+                                           
+
+                                            <div className="col-sm-2">
+                                                (Unknown)  
+                                            </div>
+                                        </div> */}
+
+
+
+                                        <div className="form-check-inline col-sm-12">
+                                            <div className="col-sm-6">
+                                                Cause of Death:  
+                                            </div>
+                                            
+                                             {/* <div className="col-sm-1"></div> */}
 
                                             <div className="col-sm-2">
                                                 (Unknown)  
                                             </div>
                                         </div>
 
-                                        <div className="form-check-inline">
-                                            <div className="col-sm-9">
+                                        <div className="form-check-inline col-sm-12">
+                                            <div className="col-sm-6">
                                                 <input type="text" name="currentCourseOFDeathColumn" disabled={this.state.isAlive}/> 
                                             </div>
-                                                {/* <span>{this.state.currentCourseOFDeath}</span> */}
                                             
-                                            <div className="col-sm-1"></div>
+                                            {/* <div className="col-sm-1"></div> */}
 
                                             <div className="col-sm-1">
                                                 <input className="form-check-input" type="checkbox" name="unknownCourseOFDeath" disabled={this.state.isAlive} />
-                                                {/* checked={values.newsletter} */}
                                             </div>
                                         </div>
                                         <br/>
+                                                {/* <span>{this.state.currentCourseOFDeath}</span> */}
+                                                {/* checked={values.newsletter} */}
 
                                         <div className="col-sm-12">
                                             Last Known Date:  

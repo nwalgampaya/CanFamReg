@@ -13,8 +13,8 @@ export default class CancerInfo extends React.Component {
     componentDidMount(){
        
         
-            // fetch saved practitioner rec id
             // const urlProfession = properties.baseUrl + "practitionerscore/" ;
+            // fetch saved practitioner rec id
             console.log("SEL this.jsonId%%%%%%%%%%%%%%%%%%% : " + this.state.jsonId)
             const urlProfession = "http://localhost:8090/ProneSpringBoot/api/practitioners/175";
             fetch(urlProfession)
@@ -33,7 +33,7 @@ export default class CancerInfo extends React.Component {
     }
 
     render() {
-        let rows = this.state.data.map(person => {
+        let rows = this.state.cancerInfo.map(person => {
             return <PersonRow key = {
               person.id
             }
